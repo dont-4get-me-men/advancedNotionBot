@@ -3,6 +3,7 @@ import type {
   RichTextItemResponse,
 } from "@notionhq/client/build/src/api-endpoints.ts";
 import { PropertyTypes, SelectPropertyResponse, propertyDate } from "./types";
+import { isNull } from "../utils";
 
 export class Properties {
   data: PageObjectResponse["properties"];
@@ -18,11 +19,13 @@ export class Properties {
     return this.getObjectPropertyByName(proprertyName)?.type;
   }
 
-  getUrl(proprertyName: string) {
-    return (this.data[proprertyName] as Extract<PropertyTypes, { type: "url" }>)
-      .url;
+  getUrl(proprertyName: string): string {
+    const url = (
+      this.data[proprertyName] as Extract<PropertyTypes, { type: "url" }>
+    ).url;
+    return isNull(url) ? "" : (url as string);
   }
-  getSelect(proprertyName: string) {
+  getSelect(proprertyName: string): string {
     return (
       (this.data[proprertyName] as Extract<PropertyTypes, { type: "select" }>)[
         "select"
@@ -30,15 +33,16 @@ export class Properties {
     ).name;
   }
 
-  getTitle(proprertyName: string) {
-    return (
+  getTitle(proprertyName: string): string {
+    const title = (
       (this.data[proprertyName] as Extract<PropertyTypes, { type: "title" }>)[
         "title"
       ] as Array<RichTextItemResponse>
     )[0]?.plain_text;
+    return isNull(title) ? "" : (title as string);
   }
 
-  getDate(proprertyName: string) {
+  getDate(proprertyName: string): string {
     const dateObject = this.data[proprertyName];
     let start = (dateObject as propertyDate)["date"]?.start;
     let end = (dateObject as propertyDate)["date"]?.end;
@@ -47,13 +51,14 @@ export class Properties {
     return `${start} - ${end}`;
   }
 
-  getNumber(proprertyName: string) {
-    return (
+  getNumber(proprertyName: string): string {
+    const number = (
       this.data[proprertyName] as Extract<PropertyTypes, { type: "number" }>
     ).number;
+    return isNull(number) ? "" : (number as string | number).toString();
   }
 
-  getPropertyByName(propertyName: string) {
+  getPropertyByName(propertyName: string): string {
     const type = this.getPropertyType(propertyName);
     switch (type) {
       case "url":
