@@ -3,7 +3,7 @@ import type {
   RichTextItemResponse,
 } from "@notionhq/client/build/src/api-endpoints.ts";
 import { PropertyTypes, SelectPropertyResponse, propertyDate } from "./types";
-import { isNull } from "../utils";
+import { isNull, makeTextBold } from "../utils";
 
 export class Properties {
   data: PageObjectResponse["properties"];
@@ -16,7 +16,7 @@ export class Properties {
   }
 
   getPropertyType(proprertyName: string) {
-    return this.getObjectPropertyByName(proprertyName)?.type;
+    return this.getObjectPropertyByName(proprertyName)?.type as string;
   }
 
   getUrl(proprertyName: string): string {
@@ -73,5 +73,35 @@ export class Properties {
         return this.getTitle(propertyName);
     }
     return "";
+  }
+
+  getNameWithValue(propertyName: string): string {
+    if (this.getPropertyType(propertyName) === "title") {
+      return makeTextBold(this.getPropertyByName(propertyName)) + "\n";
+    }
+    return `  ${propertyName}: ${this.getPropertyByName(propertyName)}\n`;
+  }
+
+  // i guess i can do smth different here, but i am not sure how. also i choose poor names for
+  getNameOfPropertyTypeTitle() {
+    for (let i in Object.keys(this.data as object)) {
+      if (this.getPropertyType(i) === "title") return i;
+    }
+    return "";
+  }
+
+  getTextByTypesFromPage(types: Array<string> = ["url", "date", "number"]) {
+    let response: string = this.getNameOfPropertyTypeTitle();
+    Object.keys(this.data as object)
+      .map((property: keyof PageObjectResponse["properties"]) => ({
+        prop: property,
+        propertyType: this.getPropertyType(property),
+      }))
+      .filter((obj) => types.includes(obj.propertyType))
+      .forEach((obj) => {
+        response += this.getNameWithValue(obj.prop);
+      });
+
+    return response;
   }
 }
