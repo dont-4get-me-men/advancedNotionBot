@@ -9,7 +9,8 @@
     // "esModuleInterop": true,
 
     // Overrides default in order to remove "dom" because this package shouldn't assume the presence of browser APIs
-    "lib": ["ES2019"],
+    //"lib": ["ES2019"]
+    "lib": ["ES2021.String"],
 
     // Emit location
     "outDir": "build",
