@@ -1,7 +1,7 @@
 import type {
   PageObjectResponse,
   RichTextItemResponse,
-} from "@notionhq/client/build/src/api-endpoints.ts";
+} from "@notionhq/client/build/src/api-endpoints";
 import { PropertyTypes, SelectPropertyResponse, propertyDate } from "./types";
 import { isNull, makeTextBold } from "../utils";
 
@@ -44,11 +44,13 @@ export class Properties {
 
   getDate(proprertyName: string): string {
     const dateObject = this.data[proprertyName];
-    let start = (dateObject as propertyDate)["date"]?.start;
-    let end = (dateObject as propertyDate)["date"]?.end;
-    start = start === null ? "" : start;
-    end = end === null ? "" : end;
-    return `${start} - ${end}`;
+    let { start = "", end = "" } = (dateObject as propertyDate)["date"] ?? {};
+    start = isNull(start) ? "" : start;
+    end = isNull(end) ? "" : end;
+    if (start !== "" && end !== "") return `${start} - ${end}`;
+    if (start === "") return `${end}`;
+    if (end === "") return `${start}`;
+    return "";
   }
 
   getNumber(proprertyName: string): string {
@@ -76,22 +78,25 @@ export class Properties {
   }
 
   getNameWithValue(propertyName: string): string {
+    if (this.getPropertyByName(propertyName) === "") return "";
     if (this.getPropertyType(propertyName) === "title") {
       return makeTextBold(this.getPropertyByName(propertyName)) + "\n";
     }
     return `  ${propertyName}: ${this.getPropertyByName(propertyName)}\n`;
   }
 
-  // i guess i can do smth different here, but i am not sure how. also i choose poor names for
-  getNameOfPropertyTypeTitle() {
-    for (let i in Object.keys(this.data as object)) {
+  // i guess i can do smth different here, but i am not sure how
+  getNameOfTitleTypeProperty() {
+    for (let i of Object.keys(this.data as object)) {
       if (this.getPropertyType(i) === "title") return i;
     }
     return "";
   }
 
   getTextByTypesFromPage(types: Array<string> = ["url", "date", "number"]) {
-    let response: string = this.getNameOfPropertyTypeTitle();
+    let titleName: string = this.getNameOfTitleTypeProperty();
+    var response: string = this.getNameWithValue(titleName);
+
     Object.keys(this.data as object)
       .map((property: keyof PageObjectResponse["properties"]) => ({
         prop: property,
@@ -99,6 +104,7 @@ export class Properties {
       }))
       .filter((obj) => types.includes(obj.propertyType))
       .forEach((obj) => {
+        let type;
         response += this.getNameWithValue(obj.prop);
       });
 
