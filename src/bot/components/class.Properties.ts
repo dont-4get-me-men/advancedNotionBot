@@ -105,7 +105,7 @@ export class Properties {
       .filter((obj) => types.includes(obj.propertyType))
       .forEach((obj) => {
         let type;
-        response += this.getNameWithValue(obj.prop);
+        response += '  '+this.getNameWithValue(obj.prop);
       });
 
     return response;
