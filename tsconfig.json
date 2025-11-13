@@ -37,6 +37,7 @@
     "noUncheckedIndexedAccess": true,
     "noPropertyAccessFromIndexSignature": true,
     "forceConsistentCasingInFileNames": true,
+     "strictPropertyInitialization": false,
     //"suppressImplicitAnyIndexErrors": true,
     //"ignoreDeprecations": "5.0"
   },
