@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx ts-node src/test.ts",
-    "dev": "nodemon src/test.ts"
+    "test1": "npx ts-node test/test.ts",
+    "test": "npx ts-node bot.ts",
+    "dev": "nodemon bot.ts"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +19,10 @@
     "typescript": "^5.4.2"
   },
   "dependencies": {
-"@notionhq/client": "^2.2.14",
+    "@grammyjs/files": "^1.2.0",
+    "@notionhq/client": "^2.2.14",
+    "dotenv": "^17.2.3",
+    "grammy": "^1.38.3",
     "nodemon": "^3.1.0"
   }
 }

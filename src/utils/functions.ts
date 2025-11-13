@@ -1,0 +1,32 @@
+export function isNull<T>(value: T | null | undefined): value is null | undefined {
+	return value === null || value === undefined;
+}
+
+// Functions for returning text in Markdown
+
+export function formatTextBold(text: string): string {
+	return "*" + text.trim() + "*";
+}
+
+export function formatTextItalic(text: string): string {
+	return "_" + text.trim() + "_";
+}
+export function formatTextForUrl(text: string, url: string): string {
+	return `[${text.trim()}](${url})`
+}
+export type Replacment = {
+	str1: string;
+	str2: string;
+};
+
+export function formatTextForProperMarkdown(text: string): string {
+
+	const change_elements: Array<Replacment> = [{ str1: "_", str2: "__" }];
+	for (let i: number = 0; i < change_elements.length; i++) {
+		text = text.replaceAll(
+			change_elements[i]?.str1 as string,
+			change_elements[i]?.str2 as string
+		);
+	}
+	return text;
+}
