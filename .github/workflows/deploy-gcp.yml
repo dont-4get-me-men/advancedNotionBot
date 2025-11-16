@@ -13,28 +13,21 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      - name: Create .env file
-        run: |
-          cat << EOF > .env
-          TEST_BOT: ${{ secrets.TEST_BOT }} 
-          NOTION_API: ${{ secrets.NOTION_API }}
-          YOUTUBE_API: ${{ secrets.YOUTUBE_API }}
-          NOTION_DB: ${{ secrets.NOTION_DB }} 
-          EOF
-      
+
+
       - name: DEploy to GCP VM via SSH  
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
-          source: ".env"
-          target: ".env"
 
           script: |
             echo "Deployment started on GCP.. "
 
             cd "advancedNotionBot"
+
+            
 
             git pull origin main
 
