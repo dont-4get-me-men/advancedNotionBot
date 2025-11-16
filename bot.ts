@@ -20,16 +20,25 @@ const commands = `
 dotenv.config();
 
 const args = process.argv.slice(2);
-const bot = new Bot<MyContext>(process.env["BOT_TOKEN"] as string);
 const notionClient = new Client({ auth: process.env["NOTION_API"] });
 
-let databaseId = process.env["TEST_NOTION_DB"] as string;
-console.log("args:", args);
+let databaseDBstring: string;
+let botTokenString: string;
+
 if (args[0] !== null && args[0] === "prod") {
-	databaseId = process.env["NOTION_DB"] as string;
+	databaseDBstring = "NOTION_DB";
+	botTokenString = "BOT_TOKEN";
 }
+else {
+	databaseDBstring = "TEST_NOTION_DB";
+	botTokenString = "TEST_BOT_TOKEN";
+}
+const databaseId = process.env[databaseDBstring] as string;
+const bot = new Bot<MyContext>(process.env[botTokenString] as string);
 const notionDB = new Database(notionClient, databaseId);
+
 (async () => { await notionDB.extractDatabaseProperties() })();
+
 
 bot.command("start", (ctx) => ctx.reply("You've started this bot"));
 bot.command("all", async (ctx) => {

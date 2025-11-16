@@ -1,0 +1,50 @@
+name: Deploy Bot to Virtual Machine
+
+on:
+  push:
+    branches:
+      - main 
+env:
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-25.10
+    environment: production 
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Create .env file
+        run: |
+          cat << EOF > .env
+          TEST_BOT: ${{ secrets.TEST_BOT }} 
+          NOTION_API: ${{ secrets.NOTION_API }}
+          YOUTUBE_API: ${{ secrets.YOUTUBE_API }}
+          NOTION_DB: ${{ secrets.NOTION_DB }} 
+          EOF
+        shell: basj 
+      
+      - name: DEploy to GCP VM via SSH  
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          source: ".env"
+          target: ".env"
+
+          script: |
+            echo "Deployment started on GCP.. "
+
+            cd "notion-bot"
+
+            git pull origin main
+
+            echo "Building new Docker image... "
+
+            docker build  -t notion_bot
+
+            docker run notion_bot
+
+            echo: "Deployment complete!"
