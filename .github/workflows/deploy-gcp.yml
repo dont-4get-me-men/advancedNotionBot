@@ -34,7 +34,7 @@ jobs:
           script: |
             echo "Deployment started on GCP.. "
 
-            cd "notion-bot"
+            cd "advancedNotionBot"
 
             git pull origin main
 
