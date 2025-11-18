@@ -45,10 +45,28 @@ bot.command("all", async (ctx) => {
 	console.log("All comand");
 	const tasks = await notionDB.getAllRecordsFromDatabase();
 	const res = tasks.results;
-	const output = new TasksOutputer(res as PageObjectResponse[]);
-	ctx.reply(output.listTaskNames());
+	const output = new TasksOutputer(res as PageObjectResponse[], ["url"]);
+	ctx.reply(output.listTaskAndUrls());
+});
+bot.command("now", async (ctx) => {
+	const tasks = await notionDB.getFilteredRecordsFromDatabase({
+		property: "Bucket",
+		select: { equals: "NOW" }
+	});
+	const res = tasks.results;
+	const output = new TasksOutputer(res as PageObjectResponse[], ["url"]);
+	ctx.reply(output.listTaskAndUrls());
 });
 
+bot.command("week", async (ctx) => {
+	const tasks = await notionDB.getFilteredRecordsFromDatabase({
+		property: "Bucket",
+		select: { equals: "WEEK" }
+	});
+	const res = tasks.results;
+	const output = new TasksOutputer(res as PageObjectResponse[], ["url"]);
+	ctx.reply(output.listTaskAndUrls());
+});
 bot.on("message:text", async (ctx) => {
 	console.log("Regular message");
 	const message = ctx.message.text;
