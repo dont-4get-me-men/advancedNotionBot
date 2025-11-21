@@ -3,19 +3,18 @@ name: Deploy Bot to Virtual Machine
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production 
+    environment: production
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-
-      - name: DEploy to GCP VM via SSH  
+      - name: DEploy to GCP VM via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VM_HOST }}
@@ -26,13 +25,31 @@ jobs:
             echo "Deployment started on GCP.. "
 
             cd "advancedNotionBot"
+            git pull origin main
+
+            echo "Building new Docker image... "
+
+            # Build with explicit tag
             sudo docker build -t notion_bot:latest .
+
+            # Stop & remove any containers that are using the old image (if any)
             containers=$(sudo docker ps -q --filter ancestor=notion_bot:latest)
             if [ -n "$containers" ]; then
-            echo "Stopping/removing containers from old image..."
-            sudo docker rm -f $containers
+              echo "Stopping/removing containers from old image..."
+              sudo docker rm -f $containers
             fi
 
-           sudo docker run -d --name notion_bot --restart unless-stopped notion_bot:latest
+            # Also remove any container with the name 'notion_bot' (extra safety)
+            if sudo docker ps -a --format '{{.Names}}' | grep -qx "notion_bot"; then
+              echo "Removing container named 'notion_bot'..."
+              sudo docker rm -f notion_bot || true
+            fi
 
-           echo "Deployment complete!"
+            # (Optional) remove old untagged images to save space
+            # sudo docker image prune -f
+
+            # Run single new container with a fixed name
+            echo "Starting new container..."
+            sudo docker run -d --name notion_bot --restart unless-stopped notion_bot:latest
+
+            echo "Deployment complete!"
