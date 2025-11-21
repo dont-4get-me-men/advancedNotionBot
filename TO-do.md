@@ -6,8 +6,8 @@
 [x] Add reaction if i added new task
 [x] add features of extracting to-do for now
 [x] add bot interface
-[ ] add deleting previous container in github actions
-[ ] add replying with markdown
+[x] add deleting previous container in github actions
+[x] add replying with markdown
 [ ] add try catch for empty message
 [ ] fix youtube url fetcher
 [ ] add with filters

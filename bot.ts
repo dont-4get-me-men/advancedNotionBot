@@ -5,15 +5,15 @@ import { type FileFlavor, hydrateFiles } from "@grammyjs/files";
 import * as dotenv from "dotenv";
 import { TextBotResponse } from "./src/telegramPart/class.botResponce";
 import { Database } from "./src/notionPart/class.Database";
-import { isNull } from "./src/utils/functions";
+import { isNull, formatTextForProperMarkdown } from "./src/utils/functions";
 import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 type MyContext = FileFlavor<Context>;
 
 const commands = `
   start - Restart bot
   all - Get all Database
-  buy - List of purchase that i need to buy
-  todo - get all todos in base
+  now - Get all tasks inside NOW bucket
+  week - Get all tasks inside WEEK bucket
 `;
 
 
@@ -40,22 +40,52 @@ const notionDB = new Database(notionClient, databaseId);
 (async () => { await notionDB.extractDatabaseProperties() })();
 
 
-bot.command("start", (ctx) => ctx.reply("You've started this bot"));
+bot.command("start", (ctx) => ctx.reply("[Yura](https://www.youtube.com/watch?v=DrbtzisnH7A)", { parse_mode: "MarkdownV2" }));
+
 bot.command("all", async (ctx) => {
-	console.log("All comand");
 	const tasks = await notionDB.getAllRecordsFromDatabase();
 	const res = tasks.results;
-	const output = new TasksOutputer(res as PageObjectResponse[], ["url"]);
-	ctx.reply(output.listTaskAndUrls());
+	const outputter = new TasksOutputer(res as PageObjectResponse[], ["url"]);
+	const response = outputter.listTaskAndUrls();
+	if (response.length === 0) {
+		ctx.reply("No tasks")
+	}
+	else {
+		ctx.reply(formatTextForProperMarkdown(response), { parse_mode: "MarkdownV2" });
+	};
 });
+bot.command("random", async (ctx) => {
+	const tasks = await notionDB.getFilteredRecordsFromDatabase({
+		property: "Bucket",
+		select: { equals: "WEEK" }
+	});
+	const res = tasks.results;
+	const outputter = new TasksOutputer(res as PageObjectResponse[], ["url"]);
+
+	const response = outputter.getRandomTask();
+	if (response.length === 0) {
+		ctx.reply("No tasks;")
+	}
+	else {
+		ctx.reply(formatTextForProperMarkdown(response), { parse_mode: "MarkdownV2" });
+	};
+});
+
 bot.command("now", async (ctx) => {
 	const tasks = await notionDB.getFilteredRecordsFromDatabase({
 		property: "Bucket",
 		select: { equals: "NOW" }
 	});
 	const res = tasks.results;
-	const output = new TasksOutputer(res as PageObjectResponse[], ["url"]);
-	ctx.reply(output.listTaskAndUrls());
+	const outputter = new TasksOutputer(res as PageObjectResponse[], ["url"]);
+
+	const response = outputter.listTaskAndUrls();
+	if (response.length === 0) {
+		ctx.reply("No tasks;")
+	}
+	else {
+		ctx.reply(formatTextForProperMarkdown(response), { parse_mode: "MarkdownV2" });
+	};
 });
 
 bot.command("week", async (ctx) => {
@@ -64,8 +94,14 @@ bot.command("week", async (ctx) => {
 		select: { equals: "WEEK" }
 	});
 	const res = tasks.results;
-	const output = new TasksOutputer(res as PageObjectResponse[], ["url"]);
-	ctx.reply(output.listTaskAndUrls());
+	const outputter = new TasksOutputer(res as PageObjectResponse[], ["url"]);
+	const response = outputter.listTaskAndUrls();
+	if (response.length === 0) {
+		ctx.reply("No tasks;")
+	}
+	else {
+		ctx.reply(formatTextForProperMarkdown(response), { parse_mode: "MarkdownV2" });
+	};
 });
 bot.on("message:text", async (ctx) => {
 	console.log("Regular message");

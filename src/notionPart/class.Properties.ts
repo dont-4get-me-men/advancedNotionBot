@@ -110,5 +110,23 @@ export class Properties {
 
 		return response;
 	}
+
+	getFullProperty() {
+		const titleName: string = this.getNameOfPropertyByType("title");
+		let response: string = this.getNameWithValue(titleName);
+
+		Object.keys(this.data as object)
+			.map((property: keyof PageObjectResponse["properties"]) => ({
+				prop: property,
+				propertyType: this.getPropertyType(property),
+			}))
+			.filter((obj) => obj.propertyType !== "title")
+			.forEach((obj) => {
+				response += this.getNameWithValue(obj.prop);
+			});
+
+		return response;
+
+	}
 }
 

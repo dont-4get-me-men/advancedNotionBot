@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx ts-node bot.ts",
+    "test": "nodemon bot.ts",
     "prod": "nodemon bot.ts prod"
 
   },
