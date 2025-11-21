@@ -23,7 +23,6 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
 
           script: |
-            
             echo "Deployment started on GCP.. "
 
             cd "advancedNotionBot"

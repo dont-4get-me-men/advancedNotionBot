@@ -1,7 +1,6 @@
 node_modules/
 
 test.ts
-README.md
 nodemon.json
 
 .env

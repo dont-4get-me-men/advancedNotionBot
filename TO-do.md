@@ -2,10 +2,13 @@
 
 [x] add UrlFetcher functions
 [x] add adding Task to Notion base
-[] Set up github action
+[x] Set up github action
 [x] Add reaction if i added new task
 [x] add features of extracting to-do for now
 [x] add bot interface
+[ ] add deleting previous container in github actions
+[ ] add replying with markdown
+[ ] add try catch for empty message
 [ ] fix youtube url fetcher
 [ ] add with filters
 [ ] add speech to text feture
