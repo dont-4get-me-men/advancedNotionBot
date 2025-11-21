@@ -21,7 +21,7 @@ export type Replacment = {
 
 export function formatTextForProperMarkdown(text: string): string {
 
-	const change_elements: Array<Replacment> = [{ str1: "_", str2: "__" }];
+	const change_elements: Array<Replacment> = [{ str1: "_", str2: "__" }, { str1: ".", str2: "\\." }, { str1: "=", str2: "\\=" }];
 	for (let i: number = 0; i < change_elements.length; i++) {
 		text = text.replaceAll(
 			change_elements[i]?.str1 as string,

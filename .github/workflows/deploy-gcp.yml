@@ -23,19 +23,17 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
 
           script: |
+            
             echo "Deployment started on GCP.. "
 
             cd "advancedNotionBot"
+            sudo docker build -t notion_bot:latest .
+            containers=$(sudo docker ps -q --filter ancestor=notion_bot:latest)
+            if [ -n "$containers" ]; then
+            echo "Stopping/removing containers from old image..."
+            sudo docker rm -f $containers
+            fi
 
-            
+           sudo docker run -d --name notion_bot --restart unless-stopped notion_bot:latest
 
-            git pull origin main
-
-            echo "Building new Docker image... "
-
-            sudo docker rm -f notion_bot || true
-            sudo docker build  -t notion_bot .
-
-            sudo docker run -d notion_bot
-
-            echo "Deployment complete!"
+           echo "Deployment complete!"
