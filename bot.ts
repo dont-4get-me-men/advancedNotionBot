@@ -51,7 +51,12 @@ bot.command("all", async (ctx) => {
 		ctx.reply("No tasks")
 	}
 	else {
-		ctx.reply(formatTextForProperMarkdown(response), { parse_mode: "MarkdownV2" });
+		try {
+			ctx.reply(formatTextForProperMarkdown(response), { parse_mode: "MarkdownV2" });
+		}
+		catch (err) {
+			ctx.reply(`Can't show you a message ${err}`)
+		}
 	};
 });
 bot.command("random", async (ctx) => {
@@ -67,7 +72,13 @@ bot.command("random", async (ctx) => {
 		ctx.reply("No tasks;")
 	}
 	else {
-		ctx.reply(formatTextForProperMarkdown(response), { parse_mode: "MarkdownV2" });
+		try {
+			ctx.reply(formatTextForProperMarkdown(response), { parse_mode: "MarkdownV2" });
+		}
+
+		catch (err) {
+			ctx.reply(`Can't show you a message ${err}`)
+		}
 	};
 });
 
@@ -84,7 +95,13 @@ bot.command("now", async (ctx) => {
 		ctx.reply("No tasks;")
 	}
 	else {
-		ctx.reply(formatTextForProperMarkdown(response), { parse_mode: "MarkdownV2" });
+
+		try {
+			ctx.reply(formatTextForProperMarkdown(response), { parse_mode: "MarkdownV2" });
+		}
+		catch (err) {
+			ctx.reply(`Can't show you a message ${err}`)
+		}
 	};
 });
 
@@ -100,7 +117,13 @@ bot.command("week", async (ctx) => {
 		ctx.reply("No tasks;")
 	}
 	else {
-		ctx.reply(formatTextForProperMarkdown(response), { parse_mode: "MarkdownV2" });
+
+		try {
+			ctx.reply(formatTextForProperMarkdown(response), { parse_mode: "MarkdownV2" });
+		}
+		catch (err) {
+			ctx.reply(`Got an error: ${err}`)
+		}
 	};
 });
 bot.on("message:text", async (ctx) => {
@@ -110,14 +133,26 @@ bot.on("message:text", async (ctx) => {
 	await messageText.processText();
 	const newPageParams: [string, string | undefined, string] = [messageText.task.title, messageText.task.url, messageText.task.insideText];
 
-	const res = await notionDB.createPage(...newPageParams);
-	if (!isNull(res.id)) {
-		ctx.react("👍");
+	try {
+		const res = await notionDB.createPage(...newPageParams);
+		if (!isNull(res.id)) {
+			try {
+				ctx.react("👍");
+			}
+			catch (err) {
+				console.log("Error with reacting")
+			}
+		}
+		else {
+			ctx.reply("Got an error");
+		}
 	}
-	else {
-		ctx.reply("Got an error");
+
+	catch (err) {
+		ctx.reply("Can't create a page");
 	}
-});
+}
+);
 bot.on("message:voice", async (ctx) => {
 	console.log('Recieved voice');
 	const voice = ctx.message.voice;
