@@ -9,6 +9,7 @@
 [x] add deleting previous container in github actions
 [x] add replying with markdown
 [ ] add try catch for empty message
+[ ] Add custom title getting from reddit
 [ ] add stopwatch on random task to track it
 [ ] fix youtube url fetcher
 [ ] add with filters
