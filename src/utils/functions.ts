@@ -16,8 +16,11 @@ export function formatTextBold(text: string): string {
 export function formatTextItalic(text: string): string {
 	return "_" + text.trim() + "_";
 }
+function escapeBrackets(text: string): string {
+	return text.replace(/([()])/g, "\\$1");;
+}
 export function formatTextForUrl(text: string, url: string): string {
-	return `[${text.trim()}](${url})`
+	return `[${escapeBrackets(text.trim())}](${url})`
 }
 export type Replacment = {
 	str1: string;
