@@ -28,21 +28,6 @@ export type Replacment = {
 };
 
 export function escapeMarkdown(input: string): string {
-	return input.replace(/([\\`*_{}\[\]()=#+\-.!])/g, "\\$1");
+	return input.replace(/([\\`*_{}=#+\-\|.!])/g, "\\$1");
 }
 
-export function formatTextForProperMarkdown(text: string): string {
-
-	const change_elements: Array<Replacment> = [{ str1: "_", str2: "__" }
-		, { str1: ".", str2: "\\." }
-		, { str1: "=", str2: "\\=" }
-		, { str1: "-", str2: "\\-" }
-		, { str1: "#", str2: "\\#" }];
-	for (let i: number = 0; i < change_elements.length; i++) {
-		text = text.replaceAll(
-			change_elements[i]?.str1 as string,
-			change_elements[i]?.str2 as string
-		);
-	}
-	return text;
-}

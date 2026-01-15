@@ -5,7 +5,7 @@ import { type FileFlavor, hydrateFiles } from "@grammyjs/files";
 import * as dotenv from "dotenv";
 import { TextBotResponse } from "./src/telegramPart/class.botResponce";
 import { Database } from "./src/notionPart/class.Database";
-import { isNull, formatTextForProperMarkdown } from "./src/utils/functions";
+import { isNull, escapeMarkdown } from "./src/utils/functions";
 import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 type MyContext = FileFlavor<Context>;
 
@@ -22,7 +22,7 @@ dotenv.config();
 const args = process.argv.slice(2);
 const notionClient = new Client({ auth: process.env["NOTION_API"] });
 
-let databaseDBstring: string;
+let databaseDBstring: string
 let botTokenString: string;
 
 if (args[0] !== null && args[0] === "prod") {
@@ -52,10 +52,10 @@ bot.command("all", async (ctx) => {
 	}
 	else {
 		try {
-			ctx.reply(formatTextForProperMarkdown(response), { parse_mode: "MarkdownV2" });
+			await ctx.reply(escapeMarkdown(response), { parse_mode: "MarkdownV2" });
 		}
 		catch (err) {
-			ctx.reply(`Can't show you a message ${err}`)
+			await ctx.reply(`Can't show you a message ${err}`)
 		}
 	};
 });
@@ -73,11 +73,11 @@ bot.command("random", async (ctx) => {
 	}
 	else {
 		try {
-			ctx.reply(formatTextForProperMarkdown(response), { parse_mode: "MarkdownV2" });
+			await ctx.reply(escapeMarkdown(response), { parse_mode: "MarkdownV2" });
 		}
 
 		catch (err) {
-			ctx.reply(`Can't show you a message ${err}`)
+			await ctx.reply(`Can't show you a message ${err}`)
 		}
 	};
 });
@@ -97,10 +97,10 @@ bot.command("now", async (ctx) => {
 	else {
 
 		try {
-			ctx.reply(formatTextForProperMarkdown(response), { parse_mode: "MarkdownV2" });
+			await ctx.reply(escapeMarkdown(response), { parse_mode: "MarkdownV2" });
 		}
 		catch (err) {
-			ctx.reply(`Can't show you a message ${err}`)
+			await ctx.reply(`Can't show you a message ${err}`)
 		}
 	};
 });
@@ -119,10 +119,10 @@ bot.command("week", async (ctx) => {
 	else {
 
 		try {
-			ctx.reply(formatTextForProperMarkdown(response), { parse_mode: "MarkdownV2" });
+			await ctx.reply(escapeMarkdown(response), { parse_mode: "MarkdownV2" });
 		}
 		catch (err) {
-			ctx.reply(`Got an error: ${err}`)
+			await ctx.reply(`Got an error: ${err}`)
 		}
 	};
 });
@@ -137,25 +137,25 @@ bot.on("message:text", async (ctx) => {
 		const res = await notionDB.createPage(...newPageParams);
 		if (!isNull(res.id)) {
 			try {
-				ctx.react("👍");
+				await ctx.react("👍");
 			}
 			catch (err) {
 				console.log("Error with reacting")
 			}
 		}
 		else {
-			ctx.reply("Got an error");
+			await ctx.reply("Got an error");
 		}
 	}
 
 	catch (err) {
-		ctx.reply("Can't create a page");
+		await ctx.reply("Can't create a page");
 	}
 }
 );
 bot.on("message:voice", async (ctx) => {
 	console.log('Recieved voice');
-	const voice = ctx.message.voice;
+	const voice = ctx.message.voice
 	console.log(voice.duration);
 	//const fileLink = await ctx.api.getFile(voice.file_id);
 	await ctx.reply(`Got a voice message (${voice.duration}s)}`);
