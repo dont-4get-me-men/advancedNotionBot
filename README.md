@@ -13,3 +13,12 @@ In this project I use next technologies:
 6. OpenAI API for SpeechToText ( soon )
 7. Github Actions for CD
 8. Tests: I ain't writing no tests ( for now)
+
+
+
+## How to start an instance of this bot
+
+1. Get a free tier Goggle vm instance
+2. Install docker with `get-docker.sh`
+3. Clone the repo
+4. Run docker instance there 
